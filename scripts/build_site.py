@@ -182,12 +182,17 @@ gpbody='<h1>채집량 늘리기</h1>'+GP.replace('<h2>채집량 늘리기 (GP �
 open(os.path.join(OUT,'gp.html'),'w',encoding='utf-8').write(page('채집량 늘리기','gp.html',gpbody,''))
 
 EXC=json.load(open(os.path.join(SRC,'exchange.json'),encoding='utf-8'))
-ebody='<h1>교환용 토큰</h1><p class="sub">이전 확장 때 챙겨 두던 교환용 토큰이 무엇으로 교환되는지 (Teamcraft 상점 데이터 기준). 비용은 교환물 1개당 필요한 토큰 수.</p>'
+ebody='<h1>교환용 토큰</h1><p class="sub">토큰으로 무엇을 받을 수 있는지 (Teamcraft 상점 데이터 기준). 창천 거리 진흥권은 하늘도적의 전리품을 얻는 용도만 표시했습니다. 숫자는 필요한 토큰 수이고, → 뒤는 받는 개수입니다.</p>'
 for t in EXC:
-    ebody+='<details open><summary><b>'+t['name']+'</b>'+(' <span class="m">'+t['alias']+'</span>' if t['alias'] else '')+' <span class="m">· '+str(len(t['rows']))+'종</span></summary><div class="tw"><table><thead><tr><th>분류</th><th>교환물</th><th class="num">비용</th></tr></thead><tbody>'
-    last=None
-    for nm,cost,amt,cat in t['rows']:
-        ebody+='<tr><td class="m">'+(cat if cat!=last else '')+'</td><td>'+nm+(' ×'+str(amt) if amt>1 else '')+'</td><td class="num">'+str(cost)+'</td></tr>';last=cat
-    ebody+='</tbody></table></div></details>'
-ecss='<style>details{margin:14px 0}summary{cursor:pointer;font-size:15px;padding:4px 0;border-bottom:1px solid var(--line)}main{max-width:760px}</style>'
-open(os.path.join(OUT,'exchange.html'),'w',encoding='utf-8').write(page('교환용 토큰','exchange.html',ebody,'',ecss))
+    ebody+='<section class="ex"><h2>'+t['name']+'</h2>'
+    cats={}
+    for r in t['rows']:cats.setdefault(r[3],[]).append(r)
+    for c,rs in cats.items():
+        ebody+='<div class="cg"><span class="cl">'+c+'</span>'
+        for nm,cost,amt,_,ic in rs:
+            ebody+='<span class="chip">'+('<img loading="lazy" data-p="'+ic+'" alt="">' if ic else '')+nm+'<b>'+(('×'+str(amt)+' ') if amt>1 else '')+str(cost)+'</b></span>'
+        ebody+='</div>'
+    ebody+='</section>'
+ecss='<style>main{max-width:860px}.cg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}.cl{width:64px;color:var(--mute);font-size:12px}.chip{display:inline-flex;align-items:center;gap:6px;padding:2px 8px 2px 2px;border:1px solid var(--line);border-radius:6px;background:var(--card);font-size:13px}.chip img{width:26px;height:26px}.chip b{color:var(--mute);font-size:12px;font-weight:600}</style>'
+escr="function url(p){return 'https://beta.xivapi.com/api/1/asset?path='+p+'_hr1.tex&format=png'}\nfunction alt(p){var m=p.match(/icon\\/(\\d+)\\/(\\d+)/);return m?'https://xivapi.com/i/'+m[1]+'/'+m[2]+'.png':''}\ndocument.querySelectorAll('img[data-p]').forEach(function(i){var p=i.dataset.p;i.src=url(p);i.onerror=function(){if(!i.dataset.t){i.dataset.t=1;i.src=alt(p)}else i.removeAttribute('src')}})"
+open(os.path.join(OUT,'exchange.html'),'w',encoding='utf-8').write(page('교환용 토큰','exchange.html',ebody,escr,ecss))
