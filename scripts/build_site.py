@@ -3,7 +3,7 @@ SRC=sys.argv[1]   # dir with guess/materials html, materials.json, gathering.jso
 OUT=sys.argv[2]
 os.makedirs(OUT,exist_ok=True)
 rd=lambda p:open(os.path.join(SRC,p),encoding='utf-8').read()
-PAGES=[('index.html','체크리스트'),('guess.html','추리'),('recipes.html','레시피'),('materials.html','재료'),('gathering.html','채집물'),('gp.html','채집량')]
+PAGES=[('index.html','체크리스트'),('guess.html','추리'),('recipes.html','레시피'),('materials.html','재료'),('gathering.html','채집물'),('gp.html','채집량'),('exchange.html','교환')]
 NAVCSS='''<style>
 .snav{display:flex;flex-wrap:wrap;gap:4px 14px;margin:0 0 14px;padding:0 0 8px;border-bottom:1px solid var(--line)}
 .snav a{color:var(--mute);text-decoration:none;font-size:14px;padding:2px 0}
@@ -138,13 +138,13 @@ CL=[
  ('scrip','자화·등화 제작·채집 화폐 한도까지 모아두기','백화·자색은 과거 확장 화폐. 한도는 제작·채집 각각 4000개'),
  ('leve','수주권 100개 채우기','업데이트 날짜에 맞춰 미리. 약 16일이면 100개가 참'),
  ('bi','두 빛깔 보석 토큰 1500개 (한계까지)','가죽·재봉·연금 재료로 많이 나감'),
- ('cust','단골손님 소장용 미리 준비','리셋날이 패치일이라 미리 만들어 두기'),
+ ('cust','단골손님 소장용 미리 준비','리셋은 화요일인데 패치일은 아직 모름. 글로벌 얼리 액세스는 목요일 업데이트였음 → 목요일 업데이트면 리셋 직전에 소진하지 말고 아껴 두기. 한섭 요일은 공개 후 판단'),
 ]),
 ('납품·소모품·정리',[
  ('gc','총사령부 납품 제작·채집 준비','템은 자기 레벨 -2까지 나옴. 제작은 HQ, 채집은 NQ도 충분'),
  ('food','강장제 충분하나요?','먼바다 낚시 수급이 빠름'),
- ('tok','교환용 토큰 챙기기: 이슈가르드 부흥권, 하늘도적의 전리품(놋쇠·강철), 보이드 맨드레이크, 알디크 라벤더','이전엔 은 광석·에테르석 재료 수급에 사용. 후에 쓰일 곳이 나올 수 있어 미리 준비'),
- ('art','제작술·채집술 상용술/개정판 적당히 준비','새 제작·채집술 추가가 없음. 황금 때는 제작 상용술 45·개정판 40, 채집 상용술 25·개정판 20 정도 사용'),
+ ('tok','교환용 토큰 챙기기: 이슈가르드 부흥권, 하늘도적의 전리품(놋쇠·강철), 보이드 맨드레이크, 알디크 라벤더','이전엔 은 광석·에테르석 재료 수급에 사용. 무엇으로 교환되는지는 교환 탭 참고'),
+ ('art','제작술·채집술 상용술/개정판 대비','새 제작·채집술이 추가될 수도, 안 될 수도 있음. 대비해 두면 좋음. 황금 때는 제작 상용술 45·개정판 40, 채집 상용술 25·개정판 20 정도 사용'),
  ('inv','인벤 비우기 · 옷장 정리 · 염료 모으기','신규 재료가 확장마다 약 120~185종 추가됨 (재료 페이지)')]),
 ('필수는 아님 (챙겨도 안 챙겨도 무관)',[
  ('bt','집사 템·레벨 맞춰 두기 (자화/전투템)','채집은 획득력만 맞추면 됨'),
@@ -174,9 +174,20 @@ function render(){let tot=0,done=0;
  $('prog').textContent=done+' / '+tot;
  document.querySelectorAll('.ck input').forEach(i=>i.onchange=()=>{st[i.dataset.id]=i.checked;save();render()})}
 $('reset').onclick=()=>{st={};save();render()};render();'''
-ccss='<style>main{max-width:1240px}#cl{columns:4 250px;column-gap:16px}.sec{break-inside:avoid;padding-bottom:6px}.sec h2{margin-top:0!important;padding-top:6px}.sec h2{margin-top:6px}.ck{padding:6px 9px!important;margin:5px 0!important}.ck{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;margin:6px 0;background:var(--card);border:1px solid var(--line);border-radius:6px;cursor:pointer}.ck input{margin-top:4px;width:16px;height:16px;padding:0}</style>'
+ccss='<style>main{max-width:1000px}#cl{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0 18px;align-items:start}.sec{padding-bottom:6px}.sec h2{margin-top:0!important;padding-top:6px}.sec h2{margin-top:6px}.ck{padding:6px 9px!important;margin:5px 0!important}.ck{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;margin:6px 0;background:var(--card);border:1px solid var(--line);border-radius:6px;cursor:pointer}.ck input{margin-top:4px;width:16px;height:16px;padding:0}</style>'
 open(os.path.join(OUT,'index.html'),'w',encoding='utf-8').write(page('백은의 탐구자 채작 대비','index.html',cbody,cscript.replace('__DATA__',json.dumps(CL,ensure_ascii=False)),ccss))
 print('ok')
 
 gpbody='<h1>채집량 늘리기</h1>'+GP.replace('<h2>채집량 늘리기 (GP 운용)</h2>','',1)
 open(os.path.join(OUT,'gp.html'),'w',encoding='utf-8').write(page('채집량 늘리기','gp.html',gpbody,''))
+
+EXC=json.load(open(os.path.join(SRC,'exchange.json'),encoding='utf-8'))
+ebody='<h1>교환용 토큰</h1><p class="sub">이전 확장 때 챙겨 두던 교환용 토큰이 무엇으로 교환되는지 (Teamcraft 상점 데이터 기준). 비용은 교환물 1개당 필요한 토큰 수.</p>'
+for t in EXC:
+    ebody+='<details open><summary><b>'+t['name']+'</b>'+(' <span class="m">'+t['alias']+'</span>' if t['alias'] else '')+' <span class="m">· '+str(len(t['rows']))+'종</span></summary><div class="tw"><table><thead><tr><th>분류</th><th>교환물</th><th class="num">비용</th></tr></thead><tbody>'
+    last=None
+    for nm,cost,amt,cat in t['rows']:
+        ebody+='<tr><td class="m">'+(cat if cat!=last else '')+'</td><td>'+nm+(' ×'+str(amt) if amt>1 else '')+'</td><td class="num">'+str(cost)+'</td></tr>';last=cat
+    ebody+='</tbody></table></div></details>'
+ecss='<style>details{margin:14px 0}summary{cursor:pointer;font-size:15px;padding:4px 0;border-bottom:1px solid var(--line)}main{max-width:760px}</style>'
+open(os.path.join(OUT,'exchange.html'),'w',encoding='utf-8').write(page('교환용 토큰','exchange.html',ebody,'',ecss))
