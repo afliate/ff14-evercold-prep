@@ -133,16 +133,16 @@ open(os.path.join(OUT,'recipes.html'),'w',encoding='utf-8').write(page('레시�
 
 # --- checklist (home)
 CL=[
-('확장 전 기본 준비 (이전 「황금의 유산 채작 대비」 시트 기준)',[
- ('crys','크리스탈은 충분하나요?','황금은 7/8, 8/8개씩 소모(시트 기준). 백은 추측: 9/8개 이상 (추리)'),
- ('scrip','자화·등화 제작·채집 화폐 한도까지 모아두기','백화·자색은 과거 확장 화폐. 이전 시트는 한도 4000 기준 (제작·채집 각각). 현재 한도는 게임에서 확인'),
- ('leve','수주권 100개 채우기','업데이트 날짜에 맞춰 미리. 약 16일이면 100개가 참 (시트 기준)'),
- ('bi','두 빛깔 보석 토큰 1000개','가죽·재봉·연금 재료로 많이 나감'),
+('확장 전 기본 준비',[
+ ('crys','크리스탈은 충분하나요?','황금은 7/8, 8/8개씩 소모. 백은 추측: 9/8개 이상 (추리)'),
+ ('scrip','자화·등화 제작·채집 화폐 한도까지 모아두기','백화·자색은 과거 확장 화폐. 한도는 제작·채집 각각 4000개'),
+ ('leve','수주권 100개 채우기','업데이트 날짜에 맞춰 미리. 약 16일이면 100개가 참'),
+ ('bi','두 빛깔 보석 토큰 1500개 (한계까지)','가죽·재봉·연금 재료로 많이 나감'),
  ('cust','단골손님 소장용 미리 준비','리셋날이 패치일이라 미리 만들어 두기'),
  ('gc','총사령부 납품 제작·채집 준비','템은 자기 레벨 -2까지 나옴. 제작은 HQ, 채집은 NQ도 충분'),
- ('food','강장제 충분하나요?','먼바다 낚시 수급이 빠름 (시트 기준)'),
+ ('food','강장제 충분하나요?','먼바다 낚시 수급이 빠름'),
  ('tok','교환용 토큰 챙기기: 이슈가르드 부흥권, 하늘도적의 전리품(놋쇠·강철), 보이드 맨드레이크, 알디크 라벤더','이전엔 은 광석·에테르석 재료 수급에 사용. 후에 쓰일 곳이 나올 수 있어 미리 준비'),
- ('art','제작술·채집술 준비','이전 시트: 제작 상용술 45·개정판 40, 채집 상용술 25·개정판 20. 새 제작·채집술 추가가 없어 이 수량 그대로 준비'),
+ ('art','제작술·채집술 상용술/개정판 적당히 준비','새 제작·채집술 추가가 없음. 황금 때는 제작 상용술 45·개정판 40, 채집 상용술 25·개정판 20 정도 사용'),
  ('inv','인벤 비우기 · 옷장 정리 · 염료 모으기','신규 재료가 확장마다 약 120~185종 추가됨 (재료 페이지)')]),
 ('필수는 아님 (챙겨도 안 챙겨도 무관)',[
  ('bt','집사 템·레벨 맞춰 두기 (자화/전투템)','채집은 획득력만 맞추면 됨'),
@@ -158,8 +158,7 @@ CL=[
  ('ore','과거 광석 후보 확보: 몰리브덴·경금·휘취은 광석/모래, 경철·은 광석, 마그네시아 가루','주괴 1개당 과거 광석 1개 패턴'),
  ('herb','5능력 허브 확보: 바람 파슬리·코자말루 캐모마일·바람 월계수잎·유칼립투스·진주풀 (+ 대성수·도끼부리 날개)','5.0 허브는 2확장(5.0~6.x) 사용, 7.0에서 교체됨. 백은이 7.0 허브를 이어 쓸 수 있어 넉넉히 (추리). 전승록 보석약도 같은 허브'),
  ('leath','7.0 가죽 부자재 확인: 아까시나무 껍질 등','하위 가죽 2~3종에서 직전 부자재 재사용 패턴'),
- ('cook','요리 재료 재고: 꼬마레몬·고지대 밀가루·프란토이오 기름·크림버섯·피토마토·발효 버터','과거 요리 재료 비중 증가 추세'),
- ('gath','채집 연습: 한정 노드 전용 채집물, 최고 레벨 채집물 위치','채집 페이지에서 확인')])]
+ ('cook','요리 재료 재고: 꼬마레몬·고지대 밀가루·프란토이오 기름·크림버섯·피토마토·발효 버터','과거 요리 재료 비중 증가 추세')])]
 CRYS=''
 cbody='<h1>백은의 탐구자 채작 대비</h1><p class="sub">체크 상태는 이 브라우저에 저장됩니다. 백은 정보는 아직 없어서 재료 항목은 과거 패턴 기반 추리입니다.</p><div id="cl"></div><p><button id="reset">전체 해제</button> <span class="cnt" id="prog"></span></p>'+CRYS
 cscript='''const CL=__DATA__;
@@ -173,7 +172,7 @@ function render(){let tot=0,done=0;
  $('prog').textContent=done+' / '+tot;
  document.querySelectorAll('.ck input').forEach(i=>i.onchange=()=>{st[i.dataset.id]=i.checked;save();render()})}
 $('reset').onclick=()=>{st={};save();render()};render();'''
-ccss='<style>.ck{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;margin:6px 0;background:var(--card);border:1px solid var(--line);border-radius:6px;cursor:pointer}.ck input{margin-top:4px;width:16px;height:16px;padding:0}</style>'
+ccss='<style>main{max-width:720px}.ck{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;margin:6px 0;background:var(--card);border:1px solid var(--line);border-radius:6px;cursor:pointer}.ck input{margin-top:4px;width:16px;height:16px;padding:0}</style>'
 open(os.path.join(OUT,'index.html'),'w',encoding='utf-8').write(page('백은의 탐구자 채작 대비','index.html',cbody,cscript.replace('__DATA__',json.dumps(CL,ensure_ascii=False)),ccss))
 print('ok')
 
