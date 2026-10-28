@@ -42,10 +42,45 @@ open(os.path.join(OUT,'materials.html'),'w',encoding='utf-8').write(inject(rd('m
 
 # --- gathering
 G=json.load(open(os.path.join(SRC,'gathering.json'),encoding='utf-8'))
+GP='''<h2>채집량 늘리기 (GP 운용)</h2>
+<p class="sub">개인 연구 시트(GP 저레벨 운용표) 정리. 강장제를 포함해 장기 수확량을 최대화하는 운용 기준입니다. 막대한 = 막대한 수익 II(100GP), 광1·광2 = 광맥의 선물 I(50GP)·II(100GP), 날달 = 날달의 복음(200GP), 석공 = 석공의 이론/농부의 지혜(300GP), 왕2 = 왕의 수익 II/축복받은 수확 II(500GP).</p>
+<h3>시작 로테이션 (900GP에서 첫 강장제 쿨 돌리기)</h3>
+<div class="tw"><table><thead><tr><th>노드 상태</th><th class="num">소비 GP</th><th>추천 조합</th><th>비고</th></tr></thead><tbody>
+<tr><td>보너스 없음</td><td class="num">450</td><td>막대한×4 + 광1</td><td class="m">4회 노드·여유 26GP. 광1로 60→70%, 강장제 손실 없이 쿨 돌리는 후보</td></tr>
+<tr><td>획득 +1</td><td class="num">450</td><td>막대한×4 + 광1</td><td class="m">4회 노드·여유 26GP. 노드 자체 +1이라 같은 GP라도 가치 높음</td></tr>
+<tr><td>획득 +3</td><td class="num">450</td><td>막대한×4 + 광1</td><td class="m">4회 노드·여유 26GP. 노드 +3이 커서 GP 태우는 가치 높음</td></tr>
+<tr><td>발생률 100%</td><td class="num">500</td><td>날달 + 막대한×3</td><td class="m">4회 노드·여유 76GP. 광맥 불필요, 100% 보너스를 날달에 활용</td></tr>
+<tr><td>내구도 +2</td><td class="num">500</td><td>막대한×5</td><td class="m">6회 노드·여유 64GP. 막대한 5회가 자연스러움</td></tr>
+</tbody></table></div>
+<p class="m">424/436GP는 이론적 최소선이고, 실제 스킬 비용 단위에 맞춰 450/500을 현실적 후보로 씁니다.</p>
+<h3>노드 상태별 우선순위</h3>
+<div class="tw"><table><thead><tr><th>노드 상태</th><th>우선 사용</th></tr></thead><tbody>
+<tr><td>보너스 없음</td><td>막대한 우선 (900GP는 왕2 검토)</td></tr>
+<tr><td>획득 +1</td><td>막대한 우선 (900GP는 왕2 검토)</td></tr>
+<tr><td>획득 +3</td><td>석공 우선</td></tr>
+<tr><td>발생률 100%</td><td>날달 우선 (900GP는 왕2 검토)</td></tr>
+<tr><td>내구도 +2</td><td>막대한 확장 우선 (900GP는 광2 + 날달)</td></tr>
+</tbody></table></div>
+<p class="m">공통 원칙: 막대한을 그 노드 최대치까지 먼저 채우고, 그다음 노드 상태에 맞는 지속형 스킬을 고릅니다. 발생률 100% 노드에서는 광맥이 낭비입니다. 700GP 발생률 100%는 100GP, 800GP 보너스 없음·획득 +1은 각 50GP를 다음 노드로 이월합니다.</p>
+<h3>가용 GP별 기대 수확 (개)</h3>
+<div class="tw"><table><thead><tr><th>가용 GP</th><th class="num">보너스 없음</th><th class="num">획득 +1</th><th class="num">획득 +3</th><th class="num">발생률 100%</th><th class="num">내구도 +2</th></tr></thead><tbody>
+<tr><td>0</td><td class="num">6.4</td><td class="num">10.4</td><td class="num">18.4</td><td class="num">8.0</td><td class="num">9.6</td></tr>
+<tr><td>100</td><td class="num">9.4</td><td class="num">13.4</td><td class="num">21.4</td><td class="num">11.0</td><td class="num">12.6</td></tr>
+<tr><td>200</td><td class="num">12.4</td><td class="num">16.4</td><td class="num">24.4</td><td class="num">14.0</td><td class="num">15.6</td></tr>
+<tr><td>300</td><td class="num">15.4</td><td class="num">19.4</td><td class="num">27.4</td><td class="num">17.0</td><td class="num">18.6</td></tr>
+<tr><td>400</td><td class="num">18.4</td><td class="num">22.4</td><td class="num">30.4</td><td class="num">20.0</td><td class="num">21.6</td></tr>
+<tr><td>500</td><td class="num">19.6</td><td class="num">23.6</td><td class="num">31.6</td><td class="num">21.0</td><td class="num">24.6</td></tr>
+<tr><td>600</td><td class="num">20.8</td><td class="num">24.8</td><td class="num">32.8</td><td class="num">24.0</td><td class="num">27.6</td></tr>
+<tr><td>700</td><td class="num">23.2</td><td class="num">27.2</td><td class="num">35.2</td><td class="num">24.0</td><td class="num">29.4</td></tr>
+<tr><td>800</td><td class="num">24.0</td><td class="num">28.0</td><td class="num">38.0</td><td class="num">25.0</td><td class="num">31.8</td></tr>
+<tr><td>900</td><td class="num">26.4</td><td class="num">30.4</td><td class="num">39.5</td><td class="num">28.0</td><td class="num">34.8</td></tr>
+</tbody></table></div>
+<p class="m">4노드 한 바퀴(고정 2 + 랜덤 2) 시뮬레이션: 900GP 시작, 고정 획득 +1 → 고정 발생률 +40% → 랜덤 꽝 → 랜덤 획득 +3 순서에서 8개 노드 합계 기대 수확 116.0개 (1바퀴 75.6 + 2바퀴 40.4). 노드 순서에 따라 한 바퀴 합계가 75.6~80.8개로 달라집니다.</p>
+'''
 gbody='''<h1>채집 구성 (3.0~7.0 x.0)</h1>
 <p class="sub">각 확장 x.0에서 처음 나온 채집물. 한정 노드 전용 = 상시 노드에는 없고 시간제·돌발·전설 노드에서만 나오는 아이템 (Teamcraft 노드 플래그 기준). 소장용 = 수집품용.</p>
 <div class="tw"><table><thead><tr><th>확장</th><th class="num">종류</th><th class="num">광업</th><th class="num">채석</th><th class="num">벌목</th><th class="num">원예</th><th class="num">만렙 Lv</th><th class="num">별 1+</th><th class="num">한정 전용</th><th class="num">소장용</th><th class="num">레시피 사용</th></tr></thead><tbody id="sum"></tbody></table></div>
-<h2>목록</h2>
+@@GP@@<h2>목록</h2>
 <div class="ctl"><select id="fs"><option value="">확장 전체</option><option>창천</option><option>홍련</option><option>칠흑</option><option>효월</option><option>황금</option></select>
 <select id="fc"><option value="">채집직 전체</option><option>광업</option><option>채석</option><option>벌목</option><option>원예</option></select>
 <select id="fk"><option value="">전체</option><option value="u">레시피 사용</option><option value="n">레시피 미사용</option><option value="sp">한정 노드 전용</option><option value="st">별 1+</option></select>
@@ -64,7 +99,7 @@ function render(){const s=$('fs').value,c=$('fc').value,k=$('fk').value,q=$('q')
  $('cnt').textContent=rows.length+'개';
  $('tb').innerHTML=rows.map(x=>`<tr><td class="i"><img loading="lazy" src="${esc(url(x.icon))}" data-alt="${esc(alt(x.icon))}" onerror="fb(this)" alt=""></td><td><span class="n">${esc(x.name)}</span>${x.stars?' <span class="tag old">★'+x.stars+'</span>':''}${x.special_only?' <span class="tag new">한정</span>':''}<div class="m">#${x.id}</div></td><td>${esc(x.patch)}<div class="m">${esc(x.set)}</div></td><td>${esc(x.cls)}</td><td class="num">${x.lvl}</td><td class="hm m">${esc(x.zones)}</td><td class="num">${x.used}</td></tr>`).join('')}
 ['fs','fc','fk'].forEach(i=>$(i).onchange=render);$('q').oninput=render;render();'''
-open(os.path.join(OUT,'gathering.html'),'w',encoding='utf-8').write(page('채집 구성 3.0~7.0','gathering.html',gbody,gscript.replace('__DATA__',json.dumps(G,ensure_ascii=False,separators=(',',':')))))
+open(os.path.join(OUT,'gathering.html'),'w',encoding='utf-8').write(page('채집 구성 3.0~7.0','gathering.html',gbody.replace('@@GP@@',GP),gscript.replace('__DATA__',json.dumps(G,ensure_ascii=False,separators=(',',':')))))
 
 # --- recipes
 rows=list(csv.DictReader(open(os.path.join(SRC,'x0_recipes.csv'),encoding='utf-8-sig')))
@@ -94,7 +129,7 @@ open(os.path.join(OUT,'recipes.html'),'w',encoding='utf-8').write(page('레시�
 # --- checklist (home)
 CL=[
 ('확장 전 기본 준비 (게임 내, 모든 확장 공통)',[
- ('crys','크리스탈·클러스터 넉넉히 비축','금속 주괴 레시피 기준 크리스탈 6~8개 사용 (5.0 이후)'),
+ ('crys','크리스탈 넉넉히 비축 (속성별 균형)','7.0 x.0 기준 장비 1개 = 2속성 × 8 = 16개, 중간 재료까지 포함하면 평균 약 54개. 클러스터는 x.0에서 안 쓰임 (아래 표)'),
  ('scrip','백색·자색 수집품 교환권 한도 확인 후 소진','이전 대비 시트 기준. 현재 상한은 게임에서 확인'),
  ('leve','리브 허용량 최대치(100) 맞추기','이전 대비 시트 기준'),
  ('bi','두 빛깔 보석 토큰 상한(1000) 확인','이전 대비 시트 기준'),
@@ -115,7 +150,16 @@ CL=[
  ('leath','7.0 가죽 부자재 확인: 아까시나무 껍질 등','하위 가죽 2~3종에서 직전 부자재 재사용 패턴'),
  ('cook','요리 재료 재고: 꼬마레몬·고지대 밀가루·프란토이오 기름·크림버섯·피토마토·발효 버터','과거 요리 재료 비중 증가 추세'),
  ('gath','채집 연습: 한정 노드 전용 채집물, 최고 레벨 채집물 위치','채집 페이지에서 확인')])]
-cbody='<h1>백은의 탐구자 채작 대비</h1><p class="sub">체크 상태는 이 브라우저에 저장됩니다. 백은 정보는 아직 없어서 재료 항목은 과거 패턴 기반 추리입니다.</p><div id="cl"></div><p><button id="reset">전체 해제</button> <span class="cnt" id="prog"></span></p>'
+CRYS='''<h2>크리스탈 사용량 (x.0 레시피, 전승록·하우징 제외)</h2>
+<div class="tw"><table><thead><tr><th>확장</th><th class="num">레시피 평균</th><th class="num">만렙대 장비 1개</th><th class="num">중간재 포함 평균</th><th class="num">중간재 포함 최대</th><th class="num">x.0 전체 1회씩</th><th>많이 쓰는 속성</th></tr></thead><tbody>
+<tr><td>창천 3.0</td><td class="num">7.3</td><td class="num">약 9.5</td><td class="num">35</td><td class="num">53</td><td class="num">4,167</td><td>바람 31%, 불 24%, 땅 21%</td></tr>
+<tr><td>홍련 4.0</td><td class="num">7.3</td><td class="num">약 9.7</td><td class="num">30</td><td class="num">46</td><td class="num">4,910</td><td>바람 32%, 불 24%, 땅 21%</td></tr>
+<tr><td>칠흑 5.0</td><td class="num">11.2</td><td class="num">약 13.8</td><td class="num">41</td><td class="num">57</td><td class="num">8,197</td><td>바람 31%, 땅 22%, 불 21%</td></tr>
+<tr><td>효월 6.0</td><td class="num">14.9</td><td class="num">16</td><td class="num">51</td><td class="num">80</td><td class="num">10,775</td><td>바람 29%, 땅 22%, 불 22%</td></tr>
+<tr><td>황금 7.0</td><td class="num">15.0</td><td class="num">16</td><td class="num">54</td><td class="num">80</td><td class="num">10,945</td><td>바람 29%, 불 23%, 땅 22%</td></tr>
+</tbody></table></div>
+<p class="m">3.0~5.0에는 샤드·클러스터도 일부 쓰였고 6.0·7.0은 크리스탈만 씁니다. "중간재 포함"은 주괴·가죽·옷감 등 제작 재료의 크리스탈까지 합친 추정치이고, 각 중간재는 레시피 하나를 기준으로 계산했습니다. 장비 1개는 같은 레벨대의 방어구·장신구 기준입니다.</p>'''
+cbody='<h1>백은의 탐구자 채작 대비</h1><p class="sub">체크 상태는 이 브라우저에 저장됩니다. 백은 정보는 아직 없어서 재료 항목은 과거 패턴 기반 추리입니다.</p><div id="cl"></div><p><button id="reset">전체 해제</button> <span class="cnt" id="prog"></span></p>'+CRYS
 cscript='''const CL=__DATA__;
 const $=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const KEY='evercold-checklist-v1';let st={};
