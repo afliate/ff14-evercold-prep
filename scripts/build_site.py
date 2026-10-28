@@ -5,7 +5,7 @@ os.makedirs(OUT,exist_ok=True)
 rd=lambda p:open(os.path.join(SRC,p),encoding='utf-8').read()
 PAGES=[('index.html','체크리스트'),('guess.html','추리'),('recipes.html','레시피'),('materials.html','재료'),('gathering.html','채집물'),('gp.html','채집량')]
 NAVCSS='''<style>
-.snav{border-top:3px solid var(--acc);padding-top:8px;display:flex;flex-wrap:wrap;gap:4px 14px;margin:0 0 14px;padding:0 0 8px;border-bottom:1px solid var(--line)}
+.snav{display:flex;flex-wrap:wrap;gap:4px 14px;margin:0 0 14px;padding:0 0 8px;border-bottom:1px solid var(--line)}
 .snav a{color:var(--mute);text-decoration:none;font-size:14px;padding:2px 0}
 .snav a.on{color:var(--fg);font-weight:700;border-bottom:2px solid var(--fg)}
 </style>'''
@@ -16,9 +16,9 @@ def inject(html,cur):
     html=html.replace('</head>',NAVCSS+'</head>',1)
     return html.replace('<main>','<main>'+nav(cur),1)
 BASE_CSS='''<style>
-:root{--bg:#eef3f8;--fg:#14202c;--mute:#5c6b7a;--card:#fbfdff;--line:#cbd7e3;--acc:#2b6fa8;--new:#1d7a46}
-@media (prefers-color-scheme:dark){:root{--bg:#0c141c;--fg:#e4edf5;--mute:#8a9bad;--card:#142230;--line:#263a4d;--acc:#8cc4ee;--new:#58c58a}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Noto Sans KR",sans-serif}
+:root{--bg:#f2f7fa;--fg:#222b40;--mute:#5f6b80;--card:#fbfdff;--line:#cfdde6;--acc:#3f6ea6;--new:#1d7a46}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1521;--fg:#e6edf5;--mute:#8d9bb0;--card:#141f2e;--line:#27384d;--acc:#86bfd0;--new:#58c58a}}
+*{box-sizing:border-box}body::before{content:"";display:block;height:4px;background:linear-gradient(90deg,#4a76ad,#8cc7c9,#d9a76a)}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Noto Sans KR",sans-serif}
 main{max-width:980px;margin:0 auto;padding:20px 16px 56px}h1{font-size:20px;margin:0 0 4px}h2{font-size:16px;margin:24px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--line)}
 .sub{color:var(--mute);font-size:13px;margin:0 0 14px}.m{color:var(--mute);font-size:12px}
 .ctl{display:flex;flex-wrap:wrap;gap:8px;position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:2;border-bottom:1px solid var(--line)}
@@ -133,17 +133,21 @@ open(os.path.join(OUT,'recipes.html'),'w',encoding='utf-8').write(page('레시�
 
 # --- checklist (home)
 CL=[
-('확장 전 기본 준비 (게임 내, 모든 확장 공통)',[
- ('crys','크리스탈 넉넉히 비축 (속성별 균형)','황금 7.0: 91~95레벨 장비는 크리스탈 2종을 7개·8개씩, 96레벨 이상은 8개·8개씩. 백은 추측: 9개·8개 이상 (추리)'),
- ('scrip','백색·자색 수집품 교환권 한도 확인 후 소진','이전 대비 시트 기준. 현재 상한은 게임에서 확인'),
- ('leve','리브 허용량 최대치(100) 맞추기','이전 대비 시트 기준'),
- ('bi','두 빛깔 보석 토큰 상한(1000) 확인','이전 대비 시트 기준'),
- ('cust','단골 거래·납품 소진','이전 대비 시트 기준'),
- ('gc','총사령부 납품 정리','이전 대비 시트 기준'),
- ('food','강장제·식사·약품 재고','신규 확장 전 가격 변동 큼'),
- ('inv','인벤토리·리테이너 정리, 빈 칸 확보','신규 재료가 확장마다 약 120~185종 추가됨 (재료 페이지)'),
- ('tele','텔레포 티켓·귀환 아이템 준비',''),
- ('skill','제작·채집 장비·스킬 점검, 만렙 장비 수리','')]),
+('확장 전 기본 준비 (이전 「황금의 유산 채작 대비」 시트 기준)',[
+ ('crys','크리스탈은 충분하나요?','황금은 7/8, 8/8개씩 소모(시트 기준). 백은 추측: 9/8개 이상 (추리)'),
+ ('scrip','자화·등화 제작·채집 화폐 한도까지 모아두기','백화·자색은 과거 확장 화폐. 이전 시트는 한도 4000 기준 (제작·채집 각각). 현재 한도는 게임에서 확인'),
+ ('leve','수주권 100개 채우기','업데이트 날짜에 맞춰 미리. 약 16일이면 100개가 참 (시트 기준)'),
+ ('bi','두 빛깔 보석 토큰 1000개','가죽·재봉·연금 재료로 많이 나감'),
+ ('cust','단골손님 소장용 미리 준비','리셋날이 패치일이라 미리 만들어 두기'),
+ ('gc','총사령부 납품 제작·채집 준비','템은 자기 레벨 -2까지 나옴. 제작은 HQ, 채집은 NQ도 충분'),
+ ('food','강장제 충분하나요?','먼바다 낚시 수급이 빠름 (시트 기준)'),
+ ('art','제작술·채집술 준비','이전 시트: 제작 상용술 45·개정판 40, 채집 상용술 25·개정판 20. 백은에 새 제작·채집술이 있는지 확인'),
+ ('inv','인벤 비우기 · 옷장 정리 · 염료 모으기','신규 재료가 확장마다 약 120~185종 추가됨 (재료 페이지)')]),
+('필수는 아님 (챙겨도 안 챙겨도 무관)',[
+ ('bt','집사 템·레벨 맞춰 두기 (자화/전투템)','채집은 획득력만 맞추면 됨'),
+ ('gs','채집 소장용 모아뒀나요?',''),
+ ('bond','결속도 관련템 챙기기','결속약·결속도 음식·부대버프 또는 스크롤. +6 이상은 효과 없음'),
+ ('tele','텔레포 티켓·귀환 아이템, 길 / 에테르석 / 전송망 이용권','')]),
 ('공개 정보 나오면 확인',[
  ('pll','마지막 프로듀서 레터 라이브(PLL) 확인','전승록·신규 장비 시기 확인용'),
  ('fan','팬 페스티벌 공개 지역·신규 직업·신규 기믹','신규 직업이 있으면 무기 레시피가 x.0에 추가됨 (추리 페이지)'),
