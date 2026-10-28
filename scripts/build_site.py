@@ -3,7 +3,7 @@ SRC=sys.argv[1]   # dir with guess/materials html, materials.json, gathering.jso
 OUT=sys.argv[2]
 os.makedirs(OUT,exist_ok=True)
 rd=lambda p:open(os.path.join(SRC,p),encoding='utf-8').read()
-PAGES=[('index.html','체크리스트'),('guess.html','추리'),('recipes.html','레시피'),('materials.html','재료'),('gathering.html','채집')]
+PAGES=[('index.html','체크리스트'),('guess.html','추리'),('recipes.html','레시피'),('materials.html','재료'),('gathering.html','채집물'),('gp.html','채집량')]
 NAVCSS='''<style>
 .snav{display:flex;flex-wrap:wrap;gap:4px 14px;margin:0 0 14px;padding:0 0 8px;border-bottom:1px solid var(--line)}
 .snav a{color:var(--mute);text-decoration:none;font-size:14px;padding:2px 0}
@@ -77,29 +77,30 @@ GP='''<h2>채집량 늘리기 (GP 운용)</h2>
 </tbody></table></div>
 <p class="m">4노드 한 바퀴(고정 2 + 랜덤 2) 시뮬레이션: 900GP 시작, 고정 획득 +1 → 고정 발생률 +40% → 랜덤 꽝 → 랜덤 획득 +3 순서에서 8개 노드 합계 기대 수확 116.0개 (1바퀴 75.6 + 2바퀴 40.4). 노드 순서에 따라 한 바퀴 합계가 75.6~80.8개로 달라집니다.</p>
 '''
-gbody='''<h1>채집 구성 (3.0~7.0 x.0)</h1>
-<p class="sub">각 확장 x.0에서 처음 나온 채집물. 한정 노드 전용 = 상시 노드에는 없고 시간제·돌발·전설 노드에서만 나오는 아이템 (Teamcraft 노드 플래그 기준). 소장용 = 수집품용.</p>
-<div class="tw"><table><thead><tr><th>확장</th><th class="num">종류</th><th class="num">광업</th><th class="num">채석</th><th class="num">벌목</th><th class="num">원예</th><th class="num">만렙 Lv</th><th class="num">별 1+</th><th class="num">한정 전용</th><th class="num">소장용</th><th class="num">레시피 사용</th></tr></thead><tbody id="sum"></tbody></table></div>
+gbody='''<h1>채집물 (3.0~7.0 x.0)</h1>
+<p class="sub">각 확장 x.0에서 처음 나온 채집물. 채집직은 광부(광물·암석)와 원예(나무·풀)로 나눕니다. 한정 노드 전용 = 상시 노드에는 없고 시간제·돌발·전설 노드에서만 나오는 아이템 (Teamcraft 노드 플래그 기준). 소장용 = 수집품용.</p>
+<div class="tw"><table><thead><tr><th>확장</th><th class="num">종류</th><th class="num">광부</th><th class="num">원예</th><th class="num">만렙 Lv</th><th class="num">별 1+</th><th class="num">한정 전용</th><th class="num">소장용</th><th class="num">레시피 사용</th></tr></thead><tbody id="sum"></tbody></table></div>
 @@GP@@<h2>목록</h2>
 <div class="ctl"><select id="fs"><option value="">확장 전체</option><option>창천</option><option>홍련</option><option>칠흑</option><option>효월</option><option>황금</option></select>
-<select id="fc"><option value="">채집직 전체</option><option>광업</option><option>채석</option><option>벌목</option><option>원예</option></select>
+<select id="fc"><option value="">채집직 전체</option><option>광부</option><option>원예</option></select>
 <select id="fk"><option value="">전체</option><option value="u">레시피 사용</option><option value="n">레시피 미사용</option><option value="sp">한정 노드 전용</option><option value="st">별 1+</option></select>
 <input id="q" placeholder="이름 검색"><span class="cnt" id="cnt"></span></div>
 <div class="tw"><table><thead><tr><th></th><th>이름</th><th>패치</th><th>채집직</th><th class="num">Lv</th><th class="hm">지역</th><th class="num">사용</th></tr></thead><tbody id="tb"></tbody></table></div>'''
 gscript='''const D=__DATA__;const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const job=x=>x.cls.split('/').map(k=>k==='광업'||k==='채석'?'광부':'원예').filter((v,i,a)=>a.indexOf(v)===i).join('/');
 const CAP={'창천':60,'홍련':70,'칠흑':80,'효월':90,'황금':100};
 function url(p){return 'https://beta.xivapi.com/api/1/asset?path='+p+'_hr1.tex&format=png'}
 function alt(p){const m=p.match(/icon\\/(\\d+)\\/(\\d+)/);return m?'https://xivapi.com/i/'+m[1]+'/'+m[2]+'.png':''}
 window.fb=function(img){if(!img.dataset.t){img.dataset.t=1;img.src=img.dataset.alt}else img.removeAttribute('src')}
-$('sum').innerHTML=Object.keys(CAP).map(s=>{const r=D.filter(x=>x.set===s);const c=k=>r.filter(x=>x.cls.split('/').includes(k)).length;
- return `<tr><td>${s}</td><td class="num">${r.length}</td><td class="num">${c('광업')}</td><td class="num">${c('채석')}</td><td class="num">${c('벌목')}</td><td class="num">${c('원예')}</td><td class="num">${r.filter(x=>x.lvl===CAP[s]).length}</td><td class="num">${r.filter(x=>x.stars>0).length}</td><td class="num">${r.filter(x=>x.special_only).length}</td><td class="num">${r.filter(x=>x.name.includes('소장용')).length}</td><td class="num">${r.filter(x=>x.used>0).length}</td></tr>`}).join('');
+$('sum').innerHTML=Object.keys(CAP).map(s=>{const r=D.filter(x=>x.set===s);
+ return `<tr><td>${s}</td><td class="num">${r.length}</td><td class="num">${r.filter(x=>job(x).includes('광부')).length}</td><td class="num">${r.filter(x=>job(x).includes('원예')).length}</td><td class="num">${r.filter(x=>x.lvl===CAP[s]).length}</td><td class="num">${r.filter(x=>x.stars>0).length}</td><td class="num">${r.filter(x=>x.special_only).length}</td><td class="num">${r.filter(x=>x.name.includes('소장용')).length}</td><td class="num">${r.filter(x=>x.used>0).length}</td></tr>`}).join('');
 function render(){const s=$('fs').value,c=$('fc').value,k=$('fk').value,q=$('q').value.trim();
- const rows=D.filter(x=>(!s||x.set===s)&&(!c||x.cls.split('/').includes(c))&&(!k||(k==='u'?x.used>0:k==='n'?x.used===0:k==='sp'?x.special_only:x.stars>0))&&(!q||x.name.includes(q)));
+ const rows=D.filter(x=>(!s||x.set===s)&&(!c||job(x).includes(c))&&(!k||(k==='u'?x.used>0:k==='n'?x.used===0:k==='sp'?x.special_only:x.stars>0))&&(!q||x.name.includes(q)));
  $('cnt').textContent=rows.length+'개';
- $('tb').innerHTML=rows.map(x=>`<tr><td class="i"><img loading="lazy" src="${esc(url(x.icon))}" data-alt="${esc(alt(x.icon))}" onerror="fb(this)" alt=""></td><td><span class="n">${esc(x.name)}</span>${x.stars?' <span class="tag old">★'+x.stars+'</span>':''}${x.special_only?' <span class="tag new">한정</span>':''}<div class="m">#${x.id}</div></td><td>${esc(x.patch)}<div class="m">${esc(x.set)}</div></td><td>${esc(x.cls)}</td><td class="num">${x.lvl}</td><td class="hm m">${esc(x.zones)}</td><td class="num">${x.used}</td></tr>`).join('')}
+ $('tb').innerHTML=rows.map(x=>`<tr><td class="i"><img loading="lazy" src="${esc(url(x.icon))}" data-alt="${esc(alt(x.icon))}" onerror="fb(this)" alt=""></td><td><span class="n">${esc(x.name)}</span>${x.stars?' <span class="tag old">★'+x.stars+'</span>':''}${x.special_only?' <span class="tag new">한정</span>':''}<div class="m">#${x.id}</div></td><td>${esc(x.patch)}<div class="m">${esc(x.set)}</div></td><td>${esc(job(x))}</td><td class="num">${x.lvl}</td><td class="hm m">${esc(x.zones)}</td><td class="num">${x.used}</td></tr>`).join('')}
 ['fs','fc','fk'].forEach(i=>$(i).onchange=render);$('q').oninput=render;render();'''
-open(os.path.join(OUT,'gathering.html'),'w',encoding='utf-8').write(page('채집 구성 3.0~7.0','gathering.html',gbody.replace('@@GP@@',GP),gscript.replace('__DATA__',json.dumps(G,ensure_ascii=False,separators=(',',':')))))
+open(os.path.join(OUT,'gathering.html'),'w',encoding='utf-8').write(page('채집 구성 3.0~7.0','gathering.html',gbody.replace('@@GP@@',''),gscript.replace('__DATA__',json.dumps(G,ensure_ascii=False,separators=(',',':')))))
 
 # --- recipes
 rows=list(csv.DictReader(open(os.path.join(SRC,'x0_recipes.csv'),encoding='utf-8-sig')))
@@ -166,3 +167,6 @@ $('reset').onclick=()=>{st={};save();render()};render();'''
 ccss='<style>.ck{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;margin:6px 0;background:var(--card);border:1px solid var(--line);border-radius:6px;cursor:pointer}.ck input{margin-top:4px;width:16px;height:16px;padding:0}</style>'
 open(os.path.join(OUT,'index.html'),'w',encoding='utf-8').write(page('백은의 탐구자 채작 대비','index.html',cbody,cscript.replace('__DATA__',json.dumps(CL,ensure_ascii=False)),ccss))
 print('ok')
+
+gpbody='<h1>채집량 늘리기</h1>'+GP.replace('<h2>채집량 늘리기 (GP 운용)</h2>','',1)
+open(os.path.join(OUT,'gp.html'),'w',encoding='utf-8').write(page('채집량 늘리기','gp.html',gpbody,''))
