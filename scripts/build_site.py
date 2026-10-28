@@ -5,7 +5,7 @@ os.makedirs(OUT,exist_ok=True)
 rd=lambda p:open(os.path.join(SRC,p),encoding='utf-8').read()
 PAGES=[('index.html','체크리스트'),('guess.html','추리'),('recipes.html','레시피'),('materials.html','재료'),('gathering.html','채집물'),('gp.html','채집량')]
 NAVCSS='''<style>
-.snav{display:flex;flex-wrap:wrap;gap:4px 14px;margin:0 0 14px;padding:0 0 8px;border-bottom:1px solid var(--line)}
+.snav{border-top:3px solid var(--acc);padding-top:8px;display:flex;flex-wrap:wrap;gap:4px 14px;margin:0 0 14px;padding:0 0 8px;border-bottom:1px solid var(--line)}
 .snav a{color:var(--mute);text-decoration:none;font-size:14px;padding:2px 0}
 .snav a.on{color:var(--fg);font-weight:700;border-bottom:2px solid var(--fg)}
 </style>'''
@@ -16,8 +16,8 @@ def inject(html,cur):
     html=html.replace('</head>',NAVCSS+'</head>',1)
     return html.replace('<main>','<main>'+nav(cur),1)
 BASE_CSS='''<style>
-:root{--bg:#f7f6f2;--fg:#1d1d1b;--mute:#6b6a64;--card:#fff;--line:#dcdad2;--acc:#2a62b8;--new:#1d7a46}
-@media (prefers-color-scheme:dark){:root{--bg:#161614;--fg:#ecebe5;--mute:#9a988f;--card:#1f1f1c;--line:#34332f;--acc:#7aa7ec;--new:#58c58a}}
+:root{--bg:#eef3f8;--fg:#14202c;--mute:#5c6b7a;--card:#fbfdff;--line:#cbd7e3;--acc:#2b6fa8;--new:#1d7a46}
+@media (prefers-color-scheme:dark){:root{--bg:#0c141c;--fg:#e4edf5;--mute:#8a9bad;--card:#142230;--line:#263a4d;--acc:#8cc4ee;--new:#58c58a}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Noto Sans KR",sans-serif}
 main{max-width:980px;margin:0 auto;padding:20px 16px 56px}h1{font-size:20px;margin:0 0 4px}h2{font-size:16px;margin:24px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--line)}
 .sub{color:var(--mute);font-size:13px;margin:0 0 14px}.m{color:var(--mute);font-size:12px}
@@ -104,7 +104,8 @@ open(os.path.join(OUT,'gathering.html'),'w',encoding='utf-8').write(page('채집
 
 # --- recipes
 rows=list(csv.DictReader(open(os.path.join(SRC,'x0_recipes.csv'),encoding='utf-8-sig')))
-R=[[r['확장'],r['패치'],r['구간'].replace(' 레벨 구간','').replace('(신규 아이템)','').strip(),int(r['하우징']),r['직업'],int(r['레벨']),int(r['별'] or 0),r['분류'],r['결과물'],r['재료']] for r in rows]
+ICO=json.load(open(os.path.join(SRC,'recipe_icons.json')))
+R=[[r['확장'],r['패치'],r['구간'].replace(' 레벨 구간','').replace('(신규 아이템)','').strip(),int(r['하우징']),r['직업'],int(r['레벨']),int(r['별'] or 0),r['분류'],r['결과물'],r['재료'],ICO.get(r['결과ID'],'')] for r in rows]
 rbody='''<h1>레시피 (3.0~7.0 x.0)</h1>
 <p class="sub">각 확장 x.0에서 처음 나온 직업 8종 레시피. 전승록 제외. 신규 = 그 확장의 새 레벨 구간, 이전 = 이전 레벨 구간이지만 새로 추가된 아이템. 재료의 크리스탈은 제외.</p>
 <div class="ctl"><select id="fs"><option value="">확장 전체</option><option>창천</option><option>홍련</option><option>칠흑</option><option>효월</option><option>황금</option></select>
@@ -113,16 +114,19 @@ rbody='''<h1>레시피 (3.0~7.0 x.0)</h1>
 <select id="fg"><option value="">구간 전체</option><option>신규</option><option>이전</option></select>
 <select id="fh"><option value="0">하우징 제외</option><option value="">하우징 포함</option><option value="1">하우징만</option></select>
 <input id="q" placeholder="결과물·재료 검색"><span class="cnt" id="cnt"></span></div>
-<div class="tw"><table><thead><tr><th>확장</th><th>직업</th><th class="num">Lv</th><th>결과물</th><th class="hm">분류</th><th class="hm">재료</th></tr></thead><tbody id="tb"></tbody></table></div>
+<div class="tw"><table><thead><tr><th></th><th>확장</th><th>직업</th><th class="num">Lv</th><th>결과물</th><th class="hm">분류</th><th class="hm">재료</th></tr></thead><tbody id="tb"></tbody></table></div>
 <p><button id="more">더 보기</button></p>'''
 rscript='''const R=__DATA__;const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 [...new Set(R.map(r=>r[7]))].sort().forEach(c=>{const o=document.createElement('option');o.textContent=c;$('fc').appendChild(o)});
+function url(p){return 'https://beta.xivapi.com/api/1/asset?path='+p+'_hr1.tex&format=png'}
+function alt(p){const m=p.match(/icon\\/(\\d+)\\/(\\d+)/);return m?'https://xivapi.com/i/'+m[1]+'/'+m[2]+'.png':''}
+window.fb=function(img){if(!img.dataset.t){img.dataset.t=1;img.src=img.dataset.alt}else img.removeAttribute('src')}
 let N=300,rows=[];
 function render(){const s=$('fs').value,j=$('fj').value,c=$('fc').value,g=$('fg').value,h=$('fh').value,q=$('q').value.trim();
  rows=R.filter(r=>(!s||r[0]===s)&&(!j||r[4]===j)&&(!c||r[7]===c)&&(!g||r[2]===g)&&(h===''||String(r[3])===h)&&(!q||r[8].includes(q)||r[9].includes(q)));
  $('cnt').textContent=rows.length+'개';draw()}
-function draw(){$('tb').innerHTML=rows.slice(0,N).map(r=>`<tr><td>${esc(r[0])}<div class="m">${esc(r[1])}</div></td><td>${esc(r[4])}</td><td class="num">${r[5]}${r[6]?' ★'+r[6]:''}</td><td><span class="n">${esc(r[8])}</span>${r[2]==='이전'?' <span class="tag old">이전</span>':''}${r[3]?' <span class="tag">하우징</span>':''}</td><td class="hm m">${esc(r[7])}</td><td class="hm m">${esc(r[9])}</td></tr>`).join('');$('more').style.display=rows.length>N?'':'none'}
+function draw(){$('tb').innerHTML=rows.slice(0,N).map(r=>`<tr><td class="i">${r[10]?`<img loading="lazy" src="${esc(url(r[10]))}" data-alt="${esc(alt(r[10]))}" onerror="fb(this)" alt="">`:''}</td><td>${esc(r[0])}<div class="m">${esc(r[1])}</div></td><td>${esc(r[4])}</td><td class="num">${r[5]}${r[6]?' ★'+r[6]:''}</td><td><span class="n">${esc(r[8])}</span>${r[2]==='이전'?' <span class="tag old">이전</span>':''}${r[3]?' <span class="tag">하우징</span>':''}</td><td class="hm m">${esc(r[7])}</td><td class="hm m">${esc(r[9])}</td></tr>`).join('');$('more').style.display=rows.length>N?'':'none'}
 $('more').onclick=()=>{N+=300;draw()};
 ['fs','fj','fc','fg','fh'].forEach(i=>$(i).onchange=()=>{N=300;render()});$('q').oninput=()=>{N=300;render()};render();'''
 open(os.path.join(OUT,'recipes.html'),'w',encoding='utf-8').write(page('레시피 3.0~7.0','recipes.html',rbody,rscript.replace('__DATA__',json.dumps(R,ensure_ascii=False,separators=(',',':')))))
