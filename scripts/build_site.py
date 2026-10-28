@@ -133,12 +133,14 @@ open(os.path.join(OUT,'recipes.html'),'w',encoding='utf-8').write(page('레시�
 
 # --- checklist (home)
 CL=[
-('확장 전 기본 준비',[
+('확장 전 기본 준비 (한도·수량)',[
  ('crys','크리스탈은 충분하나요?','황금은 7/8, 8/8개씩 소모. 백은 추측: 9/8개 이상 (추리)'),
  ('scrip','자화·등화 제작·채집 화폐 한도까지 모아두기','백화·자색은 과거 확장 화폐. 한도는 제작·채집 각각 4000개'),
  ('leve','수주권 100개 채우기','업데이트 날짜에 맞춰 미리. 약 16일이면 100개가 참'),
  ('bi','두 빛깔 보석 토큰 1500개 (한계까지)','가죽·재봉·연금 재료로 많이 나감'),
  ('cust','단골손님 소장용 미리 준비','리셋날이 패치일이라 미리 만들어 두기'),
+]),
+('납품·소모품·정리',[
  ('gc','총사령부 납품 제작·채집 준비','템은 자기 레벨 -2까지 나옴. 제작은 HQ, 채집은 NQ도 충분'),
  ('food','강장제 충분하나요?','먼바다 낚시 수급이 빠름'),
  ('tok','교환용 토큰 챙기기: 이슈가르드 부흥권, 하늘도적의 전리품(놋쇠·강철), 보이드 맨드레이크, 알디크 라벤더','이전엔 은 광석·에테르석 재료 수급에 사용. 후에 쓰일 곳이 나올 수 있어 미리 준비'),
@@ -167,12 +169,12 @@ const KEY='evercold-checklist-v1';let st={};
 try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){st={}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
 function render(){let tot=0,done=0;
- $('cl').innerHTML=CL.map(([t,items])=>`<h2>${esc(t)}</h2>`+items.map(([id,name,note])=>{tot++;if(st[id])done++;
-  return `<label class="ck"><input type="checkbox" data-id="${id}"${st[id]?' checked':''}><span><span class="n">${esc(name)}</span>${note?`<div class="m">${esc(note)}</div>`:''}</span></label>`}).join('')).join('');
+ $('cl').innerHTML=CL.map(([t,items])=>`<section class="sec"><h2>${esc(t)}</h2>`+items.map(([id,name,note])=>{tot++;if(st[id])done++;
+  return `<label class="ck"><input type="checkbox" data-id="${id}"${st[id]?' checked':''}><span><span class="n">${esc(name)}</span>${note?`<div class="m">${esc(note)}</div>`:''}</span></label>`}).join('')+'</section>').join('');
  $('prog').textContent=done+' / '+tot;
  document.querySelectorAll('.ck input').forEach(i=>i.onchange=()=>{st[i.dataset.id]=i.checked;save();render()})}
 $('reset').onclick=()=>{st={};save();render()};render();'''
-ccss='<style>main{max-width:720px}.ck{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;margin:6px 0;background:var(--card);border:1px solid var(--line);border-radius:6px;cursor:pointer}.ck input{margin-top:4px;width:16px;height:16px;padding:0}</style>'
+ccss='<style>main{max-width:1240px}#cl{columns:4 250px;column-gap:16px}.sec{break-inside:avoid;padding-bottom:6px}.sec h2{margin-top:0!important;padding-top:6px}.sec h2{margin-top:6px}.ck{padding:6px 9px!important;margin:5px 0!important}.ck{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;margin:6px 0;background:var(--card);border:1px solid var(--line);border-radius:6px;cursor:pointer}.ck input{margin-top:4px;width:16px;height:16px;padding:0}</style>'
 open(os.path.join(OUT,'index.html'),'w',encoding='utf-8').write(page('백은의 탐구자 채작 대비','index.html',cbody,cscript.replace('__DATA__',json.dumps(CL,ensure_ascii=False)),ccss))
 print('ok')
 
