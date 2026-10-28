@@ -129,7 +129,7 @@ open(os.path.join(OUT,'recipes.html'),'w',encoding='utf-8').write(page('레시�
 # --- checklist (home)
 CL=[
 ('확장 전 기본 준비 (게임 내, 모든 확장 공통)',[
- ('crys','크리스탈 넉넉히 비축 (속성별 균형)','7.0 x.0 기준 장비 1개 = 2속성 × 8 = 16개, 중간 재료까지 포함하면 평균 약 54개. 클러스터는 x.0에서 안 쓰임 (아래 표)'),
+ ('crys','크리스탈 넉넉히 비축 (속성별 균형)','황금 7.0: 91~95레벨 장비는 크리스탈 2종을 7개·8개씩, 96레벨 이상은 8개·8개씩. 백은 추측: 9개·8개 이상 (추리)'),
  ('scrip','백색·자색 수집품 교환권 한도 확인 후 소진','이전 대비 시트 기준. 현재 상한은 게임에서 확인'),
  ('leve','리브 허용량 최대치(100) 맞추기','이전 대비 시트 기준'),
  ('bi','두 빛깔 보석 토큰 상한(1000) 확인','이전 대비 시트 기준'),
@@ -150,15 +150,7 @@ CL=[
  ('leath','7.0 가죽 부자재 확인: 아까시나무 껍질 등','하위 가죽 2~3종에서 직전 부자재 재사용 패턴'),
  ('cook','요리 재료 재고: 꼬마레몬·고지대 밀가루·프란토이오 기름·크림버섯·피토마토·발효 버터','과거 요리 재료 비중 증가 추세'),
  ('gath','채집 연습: 한정 노드 전용 채집물, 최고 레벨 채집물 위치','채집 페이지에서 확인')])]
-CRYS='''<h2>크리스탈 사용량 (x.0 레시피, 전승록·하우징 제외)</h2>
-<div class="tw"><table><thead><tr><th>확장</th><th class="num">레시피 평균</th><th class="num">만렙대 장비 1개</th><th class="num">중간재 포함 평균</th><th class="num">중간재 포함 최대</th><th class="num">x.0 전체 1회씩</th><th>많이 쓰는 속성</th></tr></thead><tbody>
-<tr><td>창천 3.0</td><td class="num">7.3</td><td class="num">약 9.5</td><td class="num">35</td><td class="num">53</td><td class="num">4,167</td><td>바람 31%, 불 24%, 땅 21%</td></tr>
-<tr><td>홍련 4.0</td><td class="num">7.3</td><td class="num">약 9.7</td><td class="num">30</td><td class="num">46</td><td class="num">4,910</td><td>바람 32%, 불 24%, 땅 21%</td></tr>
-<tr><td>칠흑 5.0</td><td class="num">11.2</td><td class="num">약 13.8</td><td class="num">41</td><td class="num">57</td><td class="num">8,197</td><td>바람 31%, 땅 22%, 불 21%</td></tr>
-<tr><td>효월 6.0</td><td class="num">14.9</td><td class="num">16</td><td class="num">51</td><td class="num">80</td><td class="num">10,775</td><td>바람 29%, 땅 22%, 불 22%</td></tr>
-<tr><td>황금 7.0</td><td class="num">15.0</td><td class="num">16</td><td class="num">54</td><td class="num">80</td><td class="num">10,945</td><td>바람 29%, 불 23%, 땅 22%</td></tr>
-</tbody></table></div>
-<p class="m">3.0~5.0에는 샤드·클러스터도 일부 쓰였고 6.0·7.0은 크리스탈만 씁니다. "중간재 포함"은 주괴·가죽·옷감 등 제작 재료의 크리스탈까지 합친 추정치이고, 각 중간재는 레시피 하나를 기준으로 계산했습니다. 장비 1개는 같은 레벨대의 방어구·장신구 기준입니다.</p>'''
+CRYS=''
 cbody='<h1>백은의 탐구자 채작 대비</h1><p class="sub">체크 상태는 이 브라우저에 저장됩니다. 백은 정보는 아직 없어서 재료 항목은 과거 패턴 기반 추리입니다.</p><div id="cl"></div><p><button id="reset">전체 해제</button> <span class="cnt" id="prog"></span></p>'+CRYS
 cscript='''const CL=__DATA__;
 const $=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
