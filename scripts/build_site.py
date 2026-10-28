@@ -182,15 +182,15 @@ gpbody='<h1>채집량 늘리기</h1>'+GP.replace('<h2>채집량 늘리기 (GP �
 open(os.path.join(OUT,'gp.html'),'w',encoding='utf-8').write(page('채집량 늘리기','gp.html',gpbody,''))
 
 EXC=json.load(open(os.path.join(SRC,'exchange.json'),encoding='utf-8'))
-ebody='<h1>교환용 토큰</h1><p class="sub">토큰으로 무엇을 받을 수 있는지 (Teamcraft 상점 데이터 기준). 창천 거리 진흥권은 하늘도적의 전리품을 얻는 용도만 표시했습니다. 숫자는 필요한 토큰 수이고, → 뒤는 받는 개수입니다.</p>'
+ebody='<h1>교환용 토큰</h1><p class="sub">토큰으로 무엇을 받을 수 있는지 (Teamcraft 상점 데이터 기준). 창천 거리 진흥권은 하늘도적의 전리품을 얻는 용도만 표시했습니다. 토큰 1개당 받는 개수를 ×로 표시했고, 표시가 없으면 1개당 1개입니다. 1개보다 많이 필요한 것만 N개 → 1개로 적었습니다.</p>'
 for t in EXC:
-    ebody+='<section class="ex"><h2>'+t['name']+'</h2>'
+    ebody+='<section class="ex"><h2>'+t['name']+(' <span class="m" style="font-weight:400">1개당 교환</span>' if t['id']!=28063 else '')+'</h2>'
     cats={}
     for r in t['rows']:cats.setdefault(r[3],[]).append(r)
     for c,rs in cats.items():
         ebody+='<div class="cg"><span class="cl">'+c+'</span>'
         for nm,cost,amt,_,ic in rs:
-            ebody+='<span class="chip">'+('<img loading="lazy" data-p="'+ic+'" alt="">' if ic else '')+nm+'<b>'+(('×'+str(amt)+' ') if amt>1 else '')+str(cost)+'</b></span>'
+            ebody+='<span class="chip">'+('<img loading="lazy" data-p="'+ic+'" alt="">' if ic else '')+nm+('<b>'+(('×'+str(amt)) if cost==1 else (str(cost)+'개 → '+str(amt)+'개'))+'</b>' if not (cost==1 and amt==1) else '')+'</span>'
         ebody+='</div>'
     ebody+='</section>'
 ecss='<style>main{max-width:860px}.cg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}.cl{width:64px;color:var(--mute);font-size:12px}.chip{display:inline-flex;align-items:center;gap:6px;padding:2px 8px 2px 2px;border:1px solid var(--line);border-radius:6px;background:var(--card);font-size:13px}.chip img{width:26px;height:26px}.chip b{color:var(--mute);font-size:12px;font-weight:600}</style>'
