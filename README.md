@@ -1,5 +1,7 @@
 # ff14-evercold-prep
 
+https://afliate.github.io/ff14-evercold-prep/
+
 FFXIV 백은의 탐구자 채집·제작 대비용 추리 자료. 3.0~7.0 확장 시작 패치(x.0)의 레시피를 Teamcraft 데이터로 분석해 패턴을 정리했습니다. 백은 정보는 없어서 전부 과거 패턴 기반 추리입니다.
 
 - `index.html` — 신뢰도 등급별 추리 정리 (반복 확인 / 패턴 추정 / 순수 추리 / 예외)
