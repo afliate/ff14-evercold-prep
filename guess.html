@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>백은의 탐구자 채작 추리</title>
+<style>
+:root{--bg:#f7f6f2;--fg:#1d1d1b;--mute:#6b6a64;--card:#fff;--line:#dcdad2;--t1:#1d7a46;--t2:#2a62b8;--t3:#a8650c;--t4:#b3382c}
+@media (prefers-color-scheme:dark){:root{--bg:#161614;--fg:#ecebe5;--mute:#9a988f;--card:#1f1f1c;--line:#34332f;--t1:#58c58a;--t2:#7aa7ec;--t3:#e0a24f;--t4:#ec7a6c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,-apple-system,"Noto Sans KR",sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--mute);margin:0 0 16px;font-size:13px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 20px;position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:2}
+.bar button{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer}
+.bar button[aria-pressed=true]{border-color:var(--fg);font-weight:600}
+h2{font-size:16px;margin:28px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.item{background:var(--card);border:1px solid var(--line);border-left-width:4px;border-radius:6px;padding:10px 12px;margin:8px 0}
+.item.t1{border-left-color:var(--t1)}.item.t2{border-left-color:var(--t2)}.item.t3{border-left-color:var(--t3)}.item.t4{border-left-color:var(--t4)}
+.head{display:flex;gap:8px;align-items:baseline}
+.badge{font-size:11px;font-weight:700;white-space:nowrap}
+.t1 .badge{color:var(--t1)}.t2 .badge{color:var(--t2)}.t3 .badge{color:var(--t3)}.t4 .badge{color:var(--t4)}
+.title{font-weight:600}
+.body{margin:4px 0 0;color:var(--fg)}
+.ev{margin:4px 0 0;color:var(--mute);font-size:13px}
+.hide{display:none}
+footer{margin-top:32px;color:var(--mute);font-size:12px}
+</style>
+<style>
+.snav{display:flex;flex-wrap:wrap;gap:4px 14px;margin:0 0 14px;padding:0 0 8px;border-bottom:1px solid var(--line)}
+.snav a{color:var(--mute);text-decoration:none;font-size:14px;padding:2px 0}
+.snav a.on{color:var(--fg);font-weight:700;border-bottom:2px solid var(--fg)}
+</style></head>
+<body>
+<main><nav class="snav"><a href="index.html">체크리스트</a><a href="guess.html" class=on>추리</a><a href="recipes.html">레시피</a><a href="materials.html">재료</a><a href="gathering.html">채집</a></nav>
+<h1>백은의 탐구자 채작 추리</h1>
+<p class="sub">Teamcraft 데이터(패치 7.57까지)의 3.0~7.0 x.0 레시피 분석 기반. 전승록 제외, 하우징 분리. 백은 정보는 없음 — 전부 과거 패턴에서 나온 추리입니다.</p>
+<div class="bar" id="bar"></div>
+<div id="list"></div>
+<footer>등급: 반복 확인 = 5확장 중 4~5회 같은 규칙 / 패턴 추정 = 2~3회 반복 또는 변동 있음 / 순수 추리 = 근거 약함 / 예외 = 규칙이 깨진 사례.</footer>
+</main>
+<script>
+const TIER={t1:'반복 확인',t2:'패턴 추정',t3:'순수 추리',t4:'예외'};
+const D=[
+['금속·광석','t1','주괴 1개 = 신규 광석 + 과거 광석 1개 + 크리스탈','3.0~7.0 모든 확장에서 같은 구조. 신규 광석은 3.0~5.0 4개, 6.0·7.0 5개. 크리스탈은 6.0·7.0 8개.','예: 휘취은 주괴 = 휘취은 광석 5 + 은 광석 1(2.0) / 라아 주괴 = 라아 광석 5 + 휘취은 모래 1(6.0)'],
+['금속·광석','t2','과거 광석 후보: 몰리브덴·경금·휘취은 광석/모래, 경철·은 광석, 마그네시아 가루','7.0은 5.0·6.0 광석이 4종(경금 광석·모래, 휘취은 광석·모래). 3.0~4.0은 전부 2.0 광석이었음. 최근 확장 광석 쪽으로 이동하는 추세.','몰리브덴 광석(4.0)은 6.0 망간, 7.0 오르코 크롬에 연속 사용'],
+['금속·광석','t2','광석 → 주괴 1단계가 기본, 덩어리는 최상위 소수','덩어리 레시피: 3.0 9개, 4.0 5개, 5.0 6개, 6.0 2개, 7.0 2개','6.0·7.0은 덩어리 2개뿐'],
+['금속·광석','t4','과거 광석 선택 기준이 일정하지 않음','2.0 광석만 쓰던 3.0~4.0과 달리 5.0부터 섞이고, 같은 계열 이름이 이어지지도 않음(콘드라이트 ← 디미스라이트 광석).','후보는 줄일 수 있어도 하나로 못 좁힘'],
+['가죽','t1','가죽 5종 = 생가죽 3~4 + 부자재 1','창천~황금 모두 5종. 생가죽은 6.0 이후 4개.','마도서·치유서 5쌍과 1:1 대응'],
+['가죽','t2','하위 티어 2~3종은 직전 확장 부자재 재사용','6.0 하위 2종 노란 명반(5.0), 7.0 하위 3종 에블라나 명반(6.0). 이후 상위 티어는 신규 부자재.','8.0 하위 2~3종은 7.0 부자재(아까시나무 껍질 등)일 가능성'],
+['목재·옷감·석재','t1','목재 5종: 원목 4~5개만, 과거 재료 없음','4.0~7.0 4회 연속. 준비 필요 없음.','8.0도 신규 원목만일 것'],
+['목재·옷감·석재','t1','옷감 5종: 신규 섬유만, 6.0 이후 1단계','4.0 이후 4회 연속.',''],
+['목재·옷감·석재','t2','석재: 원석 3 + 숫돌 1, 숫돌은 직전 확장 것 재사용 가능','7.0 이후이카나이트·분홍 녹주석에 6.0 철운모 숫돌 사용.','8.0 하위 석재에 마그네시아 숫돌(7.0) 사용 가능'],
+['연금','t1','마도서·치유서 5쌍 + 마법 잉크 1종/티어','마법 잉크 = 새 금속 모래·광석 + 생물 부산물 + 물. 마도서 쌍은 가죽 5종에 대응.','7.0 텅스텐 마법 잉크에는 3.0 무지개목화가 들어감'],
+['연금','t1','3단계 약(장인·거장·명인)의 이름이 매 확장 바뀜','약차(4.0) → 물약(5.0) → 약주(6.0) → 약액(7.0)','"약X" 한 글자 변경이 4회 연속'],
+['연금','t2','환혹 약품 이름도 확장마다 새로 바뀜, 등급은 1부터','연금용제(3.0) → 영험수(4.0) → 환혹수(5.0) → 보석수(7.0). x.0=1등급, x.05=2, x.2=3, x.4=4.','6.x는 이름·번호를 칠흑에서 이어서 5~8등급이었음(예외)'],
+['연금','t2','에테르 모래에 확장 이름이 붙음','"효월의 에테르 모래"(6.0), "황금의 에테르 모래"(7.0)','5.0 이전엔 섬광·암흑·천둥·험산 같은 별칭 → 백은의 에테르 모래일 가능성'],
+['연금','t3','5능력 허브 재사용(뜰냉이·빛거베라·라임바질·긴잎라벤더·참나리)','5.0 허브가 6.0·7.0 환혹수·보석수에 연속 사용.','세 번째 재사용이 될지는 불확실'],
+['연금','t3','성장 촉진제 그리스 문자: 람다(7.0) 다음 뮤 또는 뉴','알파~델타(2.0), 입실론·제타(3.0), 에타·세타(4.0), 이오타·카파(5.0), 람다(7.0)','6.0은 공백'],
+['연금','t4','칡뿌리: 4.0~6.0 약품 3확장 연속 사용 후 7.0에서 사라짐','장기 재사용 재료도 끊길 수 있음.',''],
+['요리','t1','요리·식재료 36~37개, 마지막 레벨(80·90·100)에 4~5개 몰림','5.0 36, 6.0 37, 7.0 37','4.0도 36'],
+['요리','t1','요리 테마 = 그 확장의 지역 음식','중부유럽(3.0), 동아시아·초원(4.0), 지중해(5.0), 동유럽·중동·인도(6.0), 중남미(7.0)','실제 요리명을 그대로 쓰는 경우가 많음 → 후보 목록과 공개 레시피 대조가 유효'],
+['요리','t1','기본 가공 재료 5칸(밀가루·기름·소금·감미료·유제품) 중 3개 이상 신규','5.0은 소금, 7.0은 밀가루가 재사용.','8.0 예: 새 밀가루·기름·소금·감미료가 나올 가능성'],
+['요리','t2','요리 재료 중 과거 확장 재료 비중이 증가','3.0 30% → 4.0 20% → 5.0 33% → 6.0 33% → 7.0 43%','5.0의 꼬마레몬·고지대 밀가루·프란토이오 기름·크림버섯·피토마토가 6.0·7.0에 계속 사용'],
+['요리','t3','북유럽 요리 후보','염장·훈제 연어, 절인 청어, 미트볼, 호밀빵, 감자·비트·적양배추, 시나몬·카다몬 번, 와플, 미드, 글뢰그. 스키르·북해청어는 6.0에서 이미 사용.','일반 상식 + 여행 가이드 기반, 게임 데이터 근거 없음'],
+['구성·규모','t1','방어구 5부위 + 장신구 4종 + 요리 + 약품이 매번 등장','부위당 40~67개, 장신구 종류당 29~40개','x.0 기본 틀'],
+['구성·규모','t1','신규 직업 무기는 그 확장 x.0에 전 레벨 구간으로 추가','양손검·총·천구의(3.0), 외날검·세검(4.0), 건블레이드·투척무기(5.0), 낫·현학도구(6.0), 쌍송곳니·붓(7.0)','백은에 신규 직업이 있는지는 공개 정보 대기'],
+['구성·규모','t2','x.0 일반 레시피 약 730개, 직군당 평균 90개','칠흑 731, 효월 724, 황금 730 (창천 570, 홍련 673)','신규 레벨 구간만 보면 654~705개']
+];
+let cur='all';
+const bar=document.getElementById('bar'),list=document.getElementById('list');
+const btns=[['all','전체'],...Object.entries(TIER)];
+btns.forEach(([k,l])=>{const b=document.createElement('button');b.textContent=l;b.dataset.k=k;b.setAttribute('aria-pressed',k==='all');b.onclick=()=>{cur=k;[...bar.children].forEach(c=>c.setAttribute('aria-pressed',c.dataset.k===k));render()};bar.appendChild(b)});
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+function render(){
+ let out='',last='';
+ D.forEach(([cat,t,title,body,ev])=>{
+  if(cur!=='all'&&cur!==t)return;
+  if(cat!==last){out+=`<h2>${cat}</h2>`;last=cat}
+  out+=`<div class="item ${t}"><div class="head"><span class="badge">${TIER[t]}</span><span class="title">${esc(title)}</span></div><p class="body">${esc(body)}</p>${ev?`<p class="ev">${esc(ev)}</p>`:''}</div>`;
+ });
+ list.innerHTML=out||'<p>해당 항목 없음</p>';
+}
+render();
+</script>
+</body>
+</html>
