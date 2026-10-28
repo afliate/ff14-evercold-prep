@@ -129,7 +129,7 @@ function render(){const s=$('fs').value,j=$('fj').value,c=$('fc').value,g=$('fg'
 function draw(){$('tb').innerHTML=rows.slice(0,N).map(r=>`<tr><td class="i">${r[10]?`<img loading="lazy" src="${esc(url(r[10]))}" data-alt="${esc(alt(r[10]))}" onerror="fb(this)" alt="">`:''}</td><td>${esc(r[0])}<div class="m">${esc(r[1])}</div></td><td>${esc(r[4])}</td><td class="num">${r[5]}${r[6]?' ★'+r[6]:''}</td><td><span class="n">${esc(r[8])}</span>${r[2]==='이전'?' <span class="tag old">이전</span>':''}${r[3]?' <span class="tag">하우징</span>':''}</td><td class="hm m">${esc(r[7])}</td><td class="hm m">${esc(r[9])}</td></tr>`).join('');$('more').style.display=rows.length>N?'':'none'}
 $('more').onclick=()=>{N+=300;draw()};
 ['fs','fj','fc','fg','fh'].forEach(i=>$(i).onchange=()=>{N=300;render()});$('q').oninput=()=>{N=300;render()};render();'''
-open(os.path.join(OUT,'recipes.html'),'w',encoding='utf-8').write(page('레시피 3.0~7.0','recipes.html',rbody,rscript.replace('__DATA__',json.dumps(R,ensure_ascii=False,separators=(',',':')))))
+open(os.path.join(OUT,'recipes.html'),'w',encoding='utf-8').write(page('레시피 3.0~7.0','recipes.html',rbody,rscript.replace('__DATA__',json.dumps(R,ensure_ascii=False,separators=(',',':'))),'<style>main{max-width:1200px}#tb td:nth-child(6){min-width:120px}#tb td:nth-child(2),#tb td:nth-child(3),#tb td:nth-child(4){white-space:nowrap}#tb td:nth-child(2){min-width:56px;padding-right:12px}#tb td:nth-child(3){min-width:48px}#tb td:nth-child(4){min-width:56px}#tb td:nth-child(5){min-width:170px}</style>'))
 
 # --- checklist (home)
 CL=[
